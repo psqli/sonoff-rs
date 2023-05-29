@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "sonoff-cli",
+    "sonoff-lib"
+]
