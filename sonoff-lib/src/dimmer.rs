@@ -41,6 +41,13 @@ impl From<&SonoffDevice> for SonoffDimmer {
     }
 }
 
+impl SonoffDimmer {
+    pub async fn get_info(&self) -> Result<DevInfoDataDimmer> {
+        let info = self.dev.get_info().await?;
+        Ok(serde_json::from_value(info.per_device_info)?)
+    }
+}
+
 #[async_trait]
 impl SonoffSwitchable for SonoffDimmer {
     fn get_dev(&self) -> &SonoffDevice { &self.dev }

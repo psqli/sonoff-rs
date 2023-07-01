@@ -11,8 +11,7 @@ Supported devices:
 - [x] B02-BL/B05-BL
   - [x] Set brightness, colors, and color temperature
   - [ ] Set scenes and transition modes
-- [ ] D1
-  - [x] Initial library support
+- [x] D1
 - [ ] MINIR3
   - [x] Initial library support
 - [ ] SPM-MAIN

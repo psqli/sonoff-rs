@@ -5,8 +5,10 @@ use sonoff_lib::device::SonoffDevice;
 use sonoff_lib::bulb::SonoffBulb;
 use sonoff_lib::bulb::DevReqBulbColorType;
 use sonoff_lib::switch::SonoffSwitch;
+use sonoff_lib::dimmer::SonoffDimmer;
 
 use sonoff_lib::switchable::SonoffSwitchable;
+use sonoff_lib::dimmable::SonoffDimmable;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -40,7 +42,8 @@ enum Command {
         bulb_cmd: Option<BulbCommand>,
     },
     Dimmer {
-
+        #[command(subcommand)]
+        dimmer_cmd: Option<DimmerCommand>,
     },
 }
 
@@ -76,6 +79,21 @@ enum BulbCommand {
         brightness: u8,
         temperature: u8,
     },
+}
+
+#[derive(Subcommand)]
+enum DimmerCommand {
+    On,
+    Off,
+    Toggle,
+    Get,
+    Dim {
+        brightness: u8
+    },
+    /// Set startup state ("on", "off", or "stay")
+    Startup {
+        startup: String,
+    }
 }
 
 async fn get_info(dev: &SonoffDevice) -> Result<()> {
@@ -145,7 +163,25 @@ async fn cli() -> Result<()> {
                 },
             }
         },
-        Command::Dimmer {  } => todo!(),
+        Command::Dimmer { dimmer_cmd } => {
+            let dimmer = SonoffDimmer::from(&dev);
+            match dimmer_cmd.context("Invalid dimmer command")? {
+                DimmerCommand::On => { dimmer.on().await?; },
+                DimmerCommand::Off => { dimmer.off().await?; },
+                DimmerCommand::Toggle => { dimmer.toggle().await?; },
+                DimmerCommand::Get => {
+                    let dimmer_info = dimmer.get_info().await?;
+                    println!("switch={}", dimmer_info.switch);
+                    println!("brightness={}", dimmer_info.brightness);
+                },
+                DimmerCommand::Dim { brightness } => {
+                    dimmer.dim(brightness).await?;
+                },
+                DimmerCommand::Startup { startup } => {
+                    dimmer.set_startup(startup).await?;
+                }
+            }
+        },
     }
 
     Ok(())
