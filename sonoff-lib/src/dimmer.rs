@@ -44,12 +44,6 @@ impl From<&SonoffDevice> for SonoffDimmer {
 #[async_trait]
 impl SonoffSwitchable for SonoffDimmer {
     fn get_dev(&self) -> &SonoffDevice { &self.dev }
-
-    async fn get_switch(&self) -> Result<bool> {
-        let res = self.get_dev().get_info().await?;
-        let dimmer_info: DevInfoDataDimmer = serde_json::from_value(res.per_device_info)?;
-        Ok(dimmer_info.switch == "on")
-    }
 }
 
 #[async_trait]

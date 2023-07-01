@@ -7,9 +7,17 @@ use crate::device::{SonoffDevice, DevRes};
 // JSON models
 // ===================================================================
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize)]
 pub struct SonoffSwitchReq {
     /// Switch state: "on" or "off"
+    pub switch: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct SonoffSwitchStateReq { }
+
+#[derive(Debug, Deserialize)]
+pub struct SonoffSwitchState {
     pub switch: String,
 }
 
@@ -26,7 +34,11 @@ pub struct SonoffSwitchStartupReq {
 pub trait SonoffSwitchable {
     fn get_dev(&self) -> &SonoffDevice;
 
-    async fn get_switch(&self) -> Result<bool>;
+    async fn get_switch(&self) -> Result<bool> {
+        let req_obj = SonoffSwitchStateReq { };
+        let state: SonoffSwitchState = self.get_dev().request("/info", req_obj).await?;
+        Ok(state.switch == "on")
+    }
 
     /// Valid state: "on", "off".
     async fn set_switch(&self, state: impl Into<String> + Send) -> Result<DevRes> {

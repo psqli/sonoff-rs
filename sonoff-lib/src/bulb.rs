@@ -68,12 +68,6 @@ impl From<&SonoffDevice> for SonoffBulb {
 #[async_trait]
 impl SonoffSwitchable for SonoffBulb {
     fn get_dev(&self) -> &SonoffDevice { &self.dev }
-
-    async fn get_switch(&self) -> Result<bool> {
-        let res = self.get_dev().get_info().await?;
-        let bulb_info: DevInfoDataBulb = serde_json::from_value(res.per_device_info)?;
-        Ok(bulb_info.switch == "on")
-    }
 }
 
 impl SonoffBulb {
