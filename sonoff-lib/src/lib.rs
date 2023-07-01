@@ -1,14 +1,9 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub mod device;
+pub mod device_common;
+pub mod switchable;
+pub mod dimmable;
+pub mod switch;
+pub mod dimmer;
+pub mod bulb;
+pub mod mini_r3;
+pub mod power_meter;
